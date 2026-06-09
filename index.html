@@ -1,206 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Comfort Services SKU Lookup</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/dist/tabler-icons.min.css" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --navy:        #0b1120;
-      --navy-mid:    #131c30;
-      --navy-card:   #1a2540;
-      --navy-border: #253050;
-      --orange:      #f5a623;
-      --orange-dim:  rgba(245,166,35,0.13);
-      --orange-bdr:  rgba(245,166,35,0.45);
-      --white:       #ffffff;
-      --muted:       rgba(255,255,255,0.5);
-      --faint:       rgba(255,255,255,0.06);
-      --green:       #5ecf8a;
-      --font:        -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      --mono:        'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-    }
+<h2 class="sr-only">Comfort Services by Fastrac — Carrier SKU lookup. Pick equipment type, series, tonnage, then optional heat strip.</h2>
 
-    body {
-      background: #07090f;
-      min-height: 100vh;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 32px 16px 64px;
-      font-family: var(--font);
-    }
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:        #0b1120;
+  --navy-mid:    #131c30;
+  --navy-card:   #1a2540;
+  --navy-border: #253050;
+  --orange:      #f5a623;
+  --orange-dim:  rgba(245,166,35,0.13);
+  --orange-bdr:  rgba(245,166,35,0.45);
+  --white:       #ffffff;
+  --muted:       rgba(255,255,255,0.5);
+  --faint:       rgba(255,255,255,0.06);
+  --green:       #5ecf8a;
+}
+.wrap { background: var(--navy); border-radius: 14px; overflow: hidden; font-family: var(--font-sans); }
+.hdr { background: var(--navy-mid); border-bottom: 1px solid var(--navy-border); padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
+.logo { width: 32px; height: 32px; background: var(--orange); border-radius: 7px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.logo i { color: var(--navy); font-size: 17px; }
+.hdr-text .t1 { font-size: 15px; font-weight: 500; color: var(--white); }
+.hdr-text .t2 { font-size: 10px; color: var(--orange); letter-spacing: 0.07em; text-transform: uppercase; margin-top: 1px; }
 
-    .wrap {
-      background: var(--navy);
-      border-radius: 16px;
-      overflow: hidden;
-      width: 100%;
-      max-width: 660px;
-      border: 1px solid var(--navy-border);
-    }
+.body { padding: 16px 20px; }
 
-    /* Header */
-    .hdr {
-      background: var(--navy-mid);
-      border-bottom: 1px solid var(--navy-border);
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .logo {
-      width: 34px; height: 34px;
-      background: var(--orange);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .logo i { color: var(--navy); font-size: 18px; }
-    .hdr-text .t1 { font-size: 15px; font-weight: 600; color: var(--white); }
-    .hdr-text .t2 { font-size: 10px; color: var(--orange); letter-spacing: 0.07em; text-transform: uppercase; margin-top: 1px; }
+/* Steps bar */
+.steps { display: flex; border: 1px solid var(--navy-border); border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+.step { flex: 1; padding: 9px 11px; border-right: 1px solid var(--navy-border); cursor: default; transition: background 0.12s; min-width: 0; }
+.step:last-child { border-right: none; }
+.step.done { cursor: pointer; }
+.step.done:hover { background: var(--orange-dim); }
+.step-num { font-size: 9px; color: var(--orange); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+.step-val { font-size: 12px; font-weight: 500; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.step-val.ph { color: var(--muted); font-weight: 400; }
+.step-edit { font-size: 9px; color: var(--orange); margin-top: 1px; opacity: 0; transition: opacity 0.1s; }
+.step.done:hover .step-edit { opacity: 1; }
 
-    /* Body */
-    .body { padding: 18px 20px; }
+/* Panels */
+.panel { display: none; }
+.panel.show { display: block; }
+.panel-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 11px; font-weight: 500; }
 
-    /* Steps */
-    .steps {
-      display: flex;
-      border: 1px solid var(--navy-border);
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-    .step {
-      flex: 1;
-      padding: 10px 13px;
-      border-right: 1px solid var(--navy-border);
-      cursor: default;
-      transition: background 0.12s;
-    }
-    .step:last-child { border-right: none; }
-    .step.done { cursor: pointer; }
-    .step.done:hover { background: var(--orange-dim); }
-    .step-num { font-size: 10px; color: var(--orange); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
-    .step-val { font-size: 13px; font-weight: 500; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .step-val.placeholder { color: var(--muted); font-weight: 400; }
-    .step-edit { font-size: 10px; color: var(--orange); margin-top: 2px; opacity: 0; transition: opacity 0.1s; }
-    .step.done:hover .step-edit { opacity: 1; }
+/* Type cards */
+.type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.type-card { background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: 12px; padding: 16px; cursor: pointer; transition: border-color 0.12s, background 0.12s; display: flex; flex-direction: column; gap: 6px; }
+.type-card:hover { border-color: var(--orange-bdr); background: var(--orange-dim); }
+.type-card i { font-size: 22px; color: var(--orange); }
+.type-card .tc-name { font-size: 14px; font-weight: 500; color: var(--white); }
+.type-card .tc-count { font-size: 11px; color: var(--muted); }
 
-    /* Panels */
-    .panel { display: none; }
-    .panel.show { display: block; }
-    .panel-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 11px; font-weight: 500; }
+/* Series cards */
+.series-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+.series-card { background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: 10px; padding: 13px 12px; cursor: pointer; transition: border-color 0.12s, background 0.12s; }
+.series-card:hover { border-color: var(--orange-bdr); background: var(--orange-dim); }
+.series-card .sc-name { font-size: 13px; font-weight: 500; color: var(--white); margin-bottom: 4px; }
+.series-card .sc-stage { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+.series-card .sc-desc { font-size: 11px; color: var(--orange); opacity: 0.85; }
 
-    /* Type cards */
-    .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .type-card {
-      background: var(--navy-card);
-      border: 1px solid var(--navy-border);
-      border-radius: 12px;
-      padding: 18px 16px;
-      cursor: pointer;
-      transition: border-color 0.12s, background 0.12s;
-      display: flex; flex-direction: column; gap: 7px;
-    }
-    .type-card:hover { border-color: var(--orange-bdr); background: var(--orange-dim); }
-    .type-card i { font-size: 24px; color: var(--orange); }
-    .type-card .tc-name { font-size: 14px; font-weight: 600; color: var(--white); }
-    .type-card .tc-count { font-size: 12px; color: var(--muted); }
+/* Tonnage pills */
+.ton-row { display: flex; gap: 9px; flex-wrap: wrap; }
+.ton-pill { background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: 99px; padding: 8px 22px; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--white); font-family: var(--font-sans); transition: border-color 0.12s, background 0.12s, color 0.12s; }
+.ton-pill:hover { border-color: var(--orange-bdr); background: var(--orange-dim); color: var(--orange); }
 
-    /* Series cards */
-    .series-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
-    .series-card {
-      background: var(--navy-card);
-      border: 1px solid var(--navy-border);
-      border-radius: 10px;
-      padding: 13px 12px;
-      cursor: pointer;
-      transition: border-color 0.12s, background 0.12s;
-    }
-    .series-card:hover { border-color: var(--orange-bdr); background: var(--orange-dim); }
-    .series-card .sc-name { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 4px; }
-    .series-card .sc-stage { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
-    .series-card .sc-desc { font-size: 11px; color: var(--orange); opacity: 0.85; }
+/* Heat strip cards */
+.hs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 9px; }
+.hs-card { background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: 10px; padding: 12px 13px; cursor: pointer; transition: border-color 0.12s, background 0.12s; }
+.hs-card:hover { border-color: var(--orange-bdr); background: var(--orange-dim); }
+.hs-card.locked { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+.hs-card .hs-kw { font-size: 18px; font-weight: 500; color: var(--orange); margin-bottom: 3px; }
+.hs-card .hs-sku { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.hs-card .hs-note { font-size: 10px; color: var(--muted); }
+.hs-skip { display: inline-flex; align-items: center; gap: 5px; margin-top: 12px; font-size: 12px; color: var(--muted); background: none; border: none; cursor: pointer; font-family: var(--font-sans); padding: 0; transition: color 0.1s; }
+.hs-skip:hover { color: var(--white); }
 
-    /* Tonnage pills */
-    .ton-row { display: flex; gap: 9px; flex-wrap: wrap; }
-    .ton-pill {
-      background: var(--navy-card);
-      border: 1px solid var(--navy-border);
-      border-radius: 99px;
-      padding: 8px 22px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--white);
-      font-family: var(--font);
-      transition: border-color 0.12s, background 0.12s, color 0.12s;
-    }
-    .ton-pill:hover { border-color: var(--orange-bdr); background: var(--orange-dim); color: var(--orange); }
+/* Detail panel */
+.detail { background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: 13px; padding: 16px; display: none; }
+.detail.show { display: block; }
+.detail-title { font-size: 14px; font-weight: 500; color: var(--white); margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--navy-border); }
 
-    /* Detail */
-    .detail {
-      background: var(--navy-card);
-      border: 1px solid var(--navy-border);
-      border-radius: 13px;
-      padding: 16px;
-      display: none;
-    }
-    .detail.show { display: block; }
-    .detail-title { font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--navy-border); }
+.sku-grid { display: grid; gap: 10px; margin-bottom: 13px; }
+.sku-grid.two { grid-template-columns: 1fr 1fr; }
+.sku-grid.three { grid-template-columns: 1fr 1fr 1fr; }
 
-    .sku-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 13px; }
-    .sku-box { background: var(--navy); border: 1px solid var(--navy-border); border-radius: 9px; padding: 12px 13px; }
-    .sku-box .sl { font-size: 10px; color: var(--orange); font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
-    .sku-box .sl i { font-size: 13px; }
-    .sku-box .sv { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 3px; word-break: break-all; }
-    .sku-box .sd { font-size: 11px; color: var(--muted); margin-bottom: 10px; line-height: 1.4; }
+.sku-box { background: var(--navy); border: 1px solid var(--navy-border); border-radius: 9px; padding: 12px 13px; }
+.sku-box .sl { font-size: 10px; color: var(--orange); font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+.sku-box .sl i { font-size: 13px; }
+.sku-box .sv { font-family: var(--font-mono); font-size: 14px; font-weight: 500; color: var(--white); margin-bottom: 3px; word-break: break-all; }
+.sku-box .sd { font-size: 11px; color: var(--muted); margin-bottom: 10px; line-height: 1.4; }
+.cp-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--orange); background: var(--orange-dim); border: 1px solid var(--orange-bdr); border-radius: 6px; padding: 4px 11px; cursor: pointer; font-family: var(--font-sans); transition: background 0.1s; }
+.cp-btn:hover { background: rgba(245,166,35,0.25); }
+.cp-btn i { font-size: 12px; }
+.cp-ok { font-size: 11px; color: var(--green); margin-left: 7px; display: none; }
 
-    .cp-btn {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 11px; color: var(--orange);
-      background: var(--orange-dim); border: 1px solid var(--orange-bdr);
-      border-radius: 6px; padding: 4px 11px;
-      cursor: pointer; font-family: var(--font);
-      transition: background 0.1s;
-    }
-    .cp-btn:hover { background: rgba(245,166,35,0.25); }
-    .cp-btn i { font-size: 12px; }
-    .cp-ok { font-size: 11px; color: var(--green); margin-left: 7px; display: none; }
+.badges { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
+.badge { font-size: 11px; color: var(--muted); background: var(--faint); border: 1px solid var(--navy-border); border-radius: 99px; padding: 3px 11px; }
 
-    .badges { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
-    .badge { font-size: 11px; color: var(--muted); background: var(--faint); border: 1px solid var(--navy-border); border-radius: 99px; padding: 3px 11px; }
-
-    .reset-btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 12px; color: var(--muted);
-      background: none; border: none; cursor: pointer;
-      font-family: var(--font); padding: 0;
-      transition: color 0.1s;
-    }
-    .reset-btn:hover { color: var(--orange); }
-    .reset-btn i { font-size: 14px; }
-
-    /* Responsive */
-    @media (max-width: 480px) {
-      body { padding: 16px 10px 48px; }
-      .series-grid { grid-template-columns: 1fr 1fr; }
-      .sku-row { grid-template-columns: 1fr; }
-      .steps { flex-direction: column; }
-      .step { border-right: none; border-bottom: 1px solid var(--navy-border); }
-      .step:last-child { border-bottom: none; }
-    }
-  </style>
-</head>
-<body>
+.reset-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); background: none; border: none; cursor: pointer; font-family: var(--font-sans); padding: 0; transition: color 0.1s; }
+.reset-btn:hover { color: var(--orange); }
+</style>
 
 <div class="wrap">
   <div class="hdr">
-    <div class="logo"><i class="ti ti-snowflake"></i></div>
+    <div class="logo"><i class="ti ti-snowflake" aria-hidden="true"></i></div>
     <div class="hdr-text">
       <div class="t1">Comfort Services SKU Lookup</div>
       <div class="t2">Carrier Product Catalog</div>
@@ -208,238 +110,256 @@
   </div>
 
   <div class="body">
+    <!-- Steps -->
     <div class="steps">
       <div class="step" id="s1" onclick="goStep(1)">
         <div class="step-num">Step 1</div>
-        <div class="step-val placeholder" id="s1v">Equipment type</div>
+        <div class="step-val ph" id="s1v">Type</div>
         <div class="step-edit">Change</div>
       </div>
       <div class="step" id="s2" onclick="goStep(2)">
         <div class="step-num">Step 2</div>
-        <div class="step-val placeholder" id="s2v">Series</div>
+        <div class="step-val ph" id="s2v">Series</div>
         <div class="step-edit">Change</div>
       </div>
       <div class="step" id="s3" onclick="goStep(3)">
         <div class="step-num">Step 3</div>
-        <div class="step-val placeholder" id="s3v">Tonnage</div>
+        <div class="step-val ph" id="s3v">Tonnage</div>
+        <div class="step-edit">Change</div>
+      </div>
+      <div class="step" id="s4" onclick="goStep(4)">
+        <div class="step-num">Step 4</div>
+        <div class="step-val ph" id="s4v">Heat strip</div>
         <div class="step-edit">Change</div>
       </div>
     </div>
 
-    <!-- Step 1: Type -->
+    <!-- P1: Type -->
     <div class="panel show" id="p1">
       <div class="panel-label">Choose equipment type</div>
       <div class="type-grid">
         <div class="type-card" onclick="pickType('ac')">
-          <i class="ti ti-device-air-conditioner"></i>
+          <i class="ti ti-device-air-conditioner" aria-hidden="true"></i>
           <div class="tc-name">Air conditioner</div>
           <div class="tc-count">15 products</div>
         </div>
         <div class="type-card" onclick="pickType('hp')">
-          <i class="ti ti-temperature-plus"></i>
+          <i class="ti ti-temperature-plus" aria-hidden="true"></i>
           <div class="tc-name">Heat pump</div>
           <div class="tc-count">13 products</div>
         </div>
       </div>
     </div>
 
-    <!-- Step 2: Series -->
+    <!-- P2: Series -->
     <div class="panel" id="p2">
       <div class="panel-label">Choose series</div>
       <div class="series-grid" id="series-grid"></div>
     </div>
 
-    <!-- Step 3: Tonnage -->
+    <!-- P3: Tonnage -->
     <div class="panel" id="p3">
       <div class="panel-label">Choose tonnage</div>
       <div class="ton-row" id="ton-row"></div>
     </div>
 
+    <!-- P4: Heat strip -->
+    <div class="panel" id="p4">
+      <div class="panel-label">Choose heat strip <span style="color:var(--orange);opacity:0.7;font-size:9px;margin-left:4px;text-transform:none;letter-spacing:0">— optional</span></div>
+      <div class="hs-grid" id="hs-grid"></div>
+      <button class="hs-skip" onclick="pickHeatStrip(null)"><i class="ti ti-arrow-right" style="font-size:13px"></i> Skip — no heat strip</button>
+    </div>
+
     <!-- Result -->
     <div class="detail" id="detail">
       <div class="detail-title" id="d-title"></div>
-      <div class="sku-row">
-        <div class="sku-box">
-          <div class="sl"><i class="ti ti-device-air-conditioner"></i> Condenser SKU</div>
-          <div class="sv" id="d-sku"></div>
-          <div class="sd" id="d-model"></div>
-          <button class="cp-btn" onclick="doCopy('d-sku','cp1')"><i class="ti ti-copy"></i> Copy</button>
-          <span class="cp-ok" id="cp1">Copied!</span>
-        </div>
-        <div class="sku-box">
-          <div class="sl"><i class="ti ti-wind"></i> Air handler SKU</div>
-          <div class="sv" id="d-ah-sku"></div>
-          <div class="sd" id="d-ah-desc"></div>
-          <button class="cp-btn" onclick="doCopy('d-ah-sku','cp2')"><i class="ti ti-copy"></i> Copy</button>
-          <span class="cp-ok" id="cp2">Copied!</span>
-        </div>
-      </div>
-      <div class="badges">
-        <span class="badge" id="b-type"></span>
-        <span class="badge" id="b-series"></span>
-        <span class="badge" id="b-stage"></span>
-        <span class="badge" id="b-ton"></span>
-      </div>
-      <button class="reset-btn" onclick="reset()"><i class="ti ti-refresh"></i> Start over</button>
+      <div id="sku-container"></div>
+      <div class="badges" id="badges"></div>
+      <button class="reset-btn" onclick="reset()"><i class="ti ti-refresh" style="font-size:13px"></i> Start over</button>
     </div>
   </div>
 </div>
 
 <script>
-  const DATA = [
-    {type:"ac",series:"Comfort Series",stage:"Single Stage",model:"24SCA5",sku:"24SCA524W003",tonnage:"2 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahSku:"FB4CNF024L00"},
-    {type:"ac",series:"Comfort Series",stage:"Single Stage",model:"24SCA5",sku:"24SCA536W003",tonnage:"3 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahSku:"FB4CNF036L00"},
-    {type:"ac",series:"Comfort Series",stage:"Single Stage",model:"24SCA5",sku:"24SCA542W003",tonnage:"3.5 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahSku:"FB4CNF042L00"},
-    {type:"ac",series:"Comfort Series",stage:"Single Stage",model:"24SCA5",sku:"24SCA548W003",tonnage:"4 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahSku:"FB4CNF048L00"},
-    {type:"ac",series:"Comfort Series",stage:"Single Stage",model:"24SCA5",sku:"24SCA560W003",tonnage:"5 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahSku:"FB4CNF060L00"},
-    {type:"ac",series:"Performance Series",stage:"Double Stage",model:"26TPA8",sku:"26TPA824W003",tonnage:"2 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahSku:"FV4CNF002L00"},
-    {type:"ac",series:"Performance Series",stage:"Double Stage",model:"26TPA8",sku:"26TPA836W003",tonnage:"3 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahSku:"FV4CNF003L00"},
-    {type:"ac",series:"Performance Series",stage:"Double Stage",model:"26TPA8",sku:"26TPA842W003",tonnage:"3.5 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahSku:"FV4CNF005L00"},
-    {type:"ac",series:"Performance Series",stage:"Double Stage",model:"26TPA8",sku:"26TPA848W003",tonnage:"4 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahSku:"FV4CNF005L00"},
-    {type:"ac",series:"Performance Series",stage:"Double Stage",model:"26TPA8",sku:"26TPA860W003",tonnage:"5 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahSku:"FV4CNF006L00"},
-    {type:"ac",series:"Infinity System",stage:"Variable Speed",model:"26VNA1",sku:"26VNA124W003",tonnage:"2 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahSku:"FE4ANB003L00"},
-    {type:"ac",series:"Infinity System",stage:"Variable Speed",model:"26VNA1",sku:"26VNA136W003",tonnage:"3 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahSku:"FE4ANB003L00"},
-    {type:"ac",series:"Infinity System",stage:"Variable Speed",model:"26VNA1",sku:"26VNA142W003",tonnage:"3.5 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahSku:"FE4ANB005L00"},
-    {type:"ac",series:"Infinity System",stage:"Variable Speed",model:"26VNA1",sku:"26VNA148W003",tonnage:"4 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahSku:"FE4ANB006L00"},
-    {type:"ac",series:"Infinity System",stage:"Variable Speed",model:"26VNA1",sku:"26VNA160W003",tonnage:"5 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahSku:"FE4ANB006L00"},
-    {type:"hp",series:"Comfort Series",stage:"Single Stage",model:"25SCA5",sku:"25SCA524A003",tonnage:"2 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahSku:"FB4CNF024L00"},
-    {type:"hp",series:"Comfort Series",stage:"Single Stage",model:"25SCA5",sku:"25SCA536A003",tonnage:"3 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahSku:"FB4CNF036L00"},
-    {type:"hp",series:"Comfort Series",stage:"Single Stage",model:"25SCA5",sku:"25SCA542A003",tonnage:"3.5 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahSku:"FB4CNF042L00"},
-    {type:"hp",series:"Comfort Series",stage:"Single Stage",model:"25SCA5",sku:"25SCA548A003",tonnage:"4 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahSku:"FB4CNF048L00"},
-    {type:"hp",series:"Comfort Series",stage:"Single Stage",model:"25SCA5",sku:"25SCA560A003",tonnage:"5 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahSku:"FB4CNF060L00"},
-    {type:"hp",series:"Performance Series",stage:"Two Stage",model:"25TPA7",sku:"25TPA724A003",tonnage:"2 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahSku:"FV4CNF002L00"},
-    {type:"hp",series:"Performance Series",stage:"Two Stage",model:"25TPA7",sku:"25TPA736A003",tonnage:"3 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahSku:"FV4CNF003L00"},
-    {type:"hp",series:"Performance Series",stage:"Two Stage",model:"25TPA7",sku:"25TPA748A003",tonnage:"4 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahSku:"FV4CNF005L00"},
-    {type:"hp",series:"Performance Series",stage:"Two Stage",model:"25TPA7",sku:"25TPA760A003",tonnage:"5 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahSku:"FV4CNF006L00"},
-    {type:"hp",series:"Infinity System",stage:"Variable Speed",model:"25VNA4",sku:"25VNA424A003",tonnage:"2 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahSku:"FE4ANB002L00"},
-    {type:"hp",series:"Infinity System",stage:"Variable Speed",model:"25VNA4",sku:"25VNA436A003",tonnage:"3 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahSku:"FE4ANB003L00"},
-    {type:"hp",series:"Infinity System",stage:"Variable Speed",model:"25VNA4",sku:"25VNA448A003",tonnage:"4 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahSku:"FE4ANB005L00"},
-    {type:"hp",series:"Infinity System",stage:"Variable Speed",model:"25VNA4",sku:"25VNA460A003",tonnage:"5 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahSku:"FE4ANB006L00"},
-  ];
+const PRODUCTS = [
+  {type:"ac",series:"Comfort Series",stage:"Single Stage",model:"24SCA5",sku:"24SCA524W003",tonnage:"2 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahModel:"FB4C",ahSku:"FB4CNF024L00"},
+  {type:"ac",series:"Comfort Series",stage:"Single Stage",model:"24SCA5",sku:"24SCA536W003",tonnage:"3 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahModel:"FB4C",ahSku:"FB4CNF036L00"},
+  {type:"ac",series:"Comfort Series",stage:"Single Stage",model:"24SCA5",sku:"24SCA542W003",tonnage:"3.5 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahModel:"FB4C",ahSku:"FB4CNF042L00"},
+  {type:"ac",series:"Comfort Series",stage:"Single Stage",model:"24SCA5",sku:"24SCA548W003",tonnage:"4 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahModel:"FB4C",ahSku:"FB4CNF048L00"},
+  {type:"ac",series:"Comfort Series",stage:"Single Stage",model:"24SCA5",sku:"24SCA560W003",tonnage:"5 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahModel:"FB4C",ahSku:"FB4CNF060L00"},
+  {type:"ac",series:"Performance Series",stage:"Double Stage",model:"26TPA8",sku:"26TPA824W003",tonnage:"2 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahModel:"FV4C",ahSku:"FV4CNF002L00"},
+  {type:"ac",series:"Performance Series",stage:"Double Stage",model:"26TPA8",sku:"26TPA836W003",tonnage:"3 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahModel:"FV4C",ahSku:"FV4CNF003L00"},
+  {type:"ac",series:"Performance Series",stage:"Double Stage",model:"26TPA8",sku:"26TPA842W003",tonnage:"3.5 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahModel:"FV4C",ahSku:"FV4CNF005L00"},
+  {type:"ac",series:"Performance Series",stage:"Double Stage",model:"26TPA8",sku:"26TPA848W003",tonnage:"4 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahModel:"FV4C",ahSku:"FV4CNF005L00"},
+  {type:"ac",series:"Performance Series",stage:"Double Stage",model:"26TPA8",sku:"26TPA860W003",tonnage:"5 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahModel:"FV4C",ahSku:"FV4CNF006L00"},
+  {type:"ac",series:"Infinity System",stage:"Variable Speed",model:"26VNA1",sku:"26VNA124W003",tonnage:"2 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahModel:"FE4A",ahSku:"FE4ANB003L00"},
+  {type:"ac",series:"Infinity System",stage:"Variable Speed",model:"26VNA1",sku:"26VNA136W003",tonnage:"3 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahModel:"FE4A",ahSku:"FE4ANB003L00"},
+  {type:"ac",series:"Infinity System",stage:"Variable Speed",model:"26VNA1",sku:"26VNA142W003",tonnage:"3.5 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahModel:"FE4A",ahSku:"FE4ANB005L00"},
+  {type:"ac",series:"Infinity System",stage:"Variable Speed",model:"26VNA1",sku:"26VNA148W003",tonnage:"4 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahModel:"FE4A",ahSku:"FE4ANB006L00"},
+  {type:"ac",series:"Infinity System",stage:"Variable Speed",model:"26VNA1",sku:"26VNA160W003",tonnage:"5 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahModel:"FE4A",ahSku:"FE4ANB006L00"},
+  {type:"hp",series:"Comfort Series",stage:"Single Stage",model:"25SCA5",sku:"25SCA524A003",tonnage:"2 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahModel:"FB4C",ahSku:"FB4CNF024L00"},
+  {type:"hp",series:"Comfort Series",stage:"Single Stage",model:"25SCA5",sku:"25SCA536A003",tonnage:"3 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahModel:"FB4C",ahSku:"FB4CNF036L00"},
+  {type:"hp",series:"Comfort Series",stage:"Single Stage",model:"25SCA5",sku:"25SCA542A003",tonnage:"3.5 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahModel:"FB4C",ahSku:"FB4CNF042L00"},
+  {type:"hp",series:"Comfort Series",stage:"Single Stage",model:"25SCA5",sku:"25SCA548A003",tonnage:"4 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahModel:"FB4C",ahSku:"FB4CNF048L00"},
+  {type:"hp",series:"Comfort Series",stage:"Single Stage",model:"25SCA5",sku:"25SCA560A003",tonnage:"5 ton",ahDesc:"Comfort Series Fan Coil (FB4C)",ahModel:"FB4C",ahSku:"FB4CNF060L00"},
+  {type:"hp",series:"Performance Series",stage:"Two Stage",model:"25TPA7",sku:"25TPA724A003",tonnage:"2 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahModel:"FV4C",ahSku:"FV4CNF002L00"},
+  {type:"hp",series:"Performance Series",stage:"Two Stage",model:"25TPA7",sku:"25TPA736A003",tonnage:"3 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahModel:"FV4C",ahSku:"FV4CNF003L00"},
+  {type:"hp",series:"Performance Series",stage:"Two Stage",model:"25TPA7",sku:"25TPA748A003",tonnage:"4 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahModel:"FV4C",ahSku:"FV4CNF005L00"},
+  {type:"hp",series:"Performance Series",stage:"Two Stage",model:"25TPA7",sku:"25TPA760A003",tonnage:"5 ton",ahDesc:"Performance Series Fan Coil (FV4C)",ahModel:"FV4C",ahSku:"FV4CNF006L00"},
+  {type:"hp",series:"Infinity System",stage:"Variable Speed",model:"25VNA4",sku:"25VNA424A003",tonnage:"2 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahModel:"FE4A",ahSku:"FE4ANB002L00"},
+  {type:"hp",series:"Infinity System",stage:"Variable Speed",model:"25VNA4",sku:"25VNA436A003",tonnage:"3 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahModel:"FE4A",ahSku:"FE4ANB003L00"},
+  {type:"hp",series:"Infinity System",stage:"Variable Speed",model:"25VNA4",sku:"25VNA448A003",tonnage:"4 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahModel:"FE4A",ahSku:"FE4ANB005L00"},
+  {type:"hp",series:"Infinity System",stage:"Variable Speed",model:"25VNA4",sku:"25VNA460A003",tonnage:"5 ton",ahDesc:"Infinity Variable-Speed Fan Coil (FE4A)",ahModel:"FE4A",ahSku:"FE4ANB006L00"},
+];
 
-  const SERIES_INFO = {
-    "Comfort Series":     { stage: "Single stage",    desc: "Entry-level reliability" },
-    "Performance Series": { stage: "Two / double stage", desc: "Enhanced efficiency" },
-    "Infinity System":    { stage: "Variable speed",  desc: "Premium comfort control" },
-  };
+const HEAT_STRIPS = [
+  {kw:"5 kW",  sku:"KFCEH0501N05", note:"Non-fused · 1-phase",  hpOnly:false},
+  {kw:"8 kW",  sku:"KFCEH0801N08", note:"Non-fused · 1-phase",  hpOnly:false},
+  {kw:"10 kW", sku:"KFCEH0901N10", note:"Non-fused · 1-phase",  hpOnly:false},
+  {kw:"15 kW", sku:"KFCEH0201H15", note:"Smart Heat · HP only",  hpOnly:true},
+  {kw:"20 kW", sku:"KFCEH0301H20", note:"Smart Heat · HP only",  hpOnly:true},
+];
 
-  let selType = null, selSeries = null;
+const SERIES_INFO = {
+  "Comfort Series":     {stage:"Single stage",       desc:"Entry-level reliability"},
+  "Performance Series": {stage:"Two / double stage", desc:"Enhanced efficiency"},
+  "Infinity System":    {stage:"Variable speed",     desc:"Premium comfort control"},
+};
 
-  function showOnly(id) {
-    ['p1','p2','p3'].forEach(p => document.getElementById(p).classList.remove('show'));
-    if (id) document.getElementById(id).classList.add('show');
-  }
+let selType=null, selSeries=null, selTon=null, selHS=null, currentMatch=null;
 
-  function setStep(n, val) {
-    const vEl = document.getElementById('s' + n + 'v');
-    const sEl = document.getElementById('s' + n);
-    const placeholders = ['Equipment type', 'Series', 'Tonnage'];
-    if (val) {
-      vEl.textContent = val;
-      vEl.classList.remove('placeholder');
-      sEl.classList.add('done');
-    } else {
-      vEl.textContent = placeholders[n - 1];
-      vEl.classList.add('placeholder');
-      sEl.classList.remove('done');
-    }
-  }
+function showOnly(id) {
+  ['p1','p2','p3','p4'].forEach(p => document.getElementById(p).classList.remove('show'));
+  if (id) document.getElementById(id).classList.add('show');
+}
 
-  function goStep(n) {
-    if (n === 1) {
-      selType = null; selSeries = null;
-      setStep(1, null); setStep(2, null); setStep(3, null);
-      document.getElementById('detail').classList.remove('show');
-      showOnly('p1');
-    } else if (n === 2 && selType) {
-      selSeries = null;
-      setStep(2, null); setStep(3, null);
-      document.getElementById('detail').classList.remove('show');
-      renderSeries(); showOnly('p2');
-    } else if (n === 3 && selSeries) {
-      setStep(3, null);
-      document.getElementById('detail').classList.remove('show');
-      renderTonnage(); showOnly('p3');
-    }
-  }
+function setStep(n, val) {
+  const v = document.getElementById('s'+n+'v');
+  const s = document.getElementById('s'+n);
+  const ph = ['Type','Series','Tonnage','Heat strip'];
+  if (val) { v.textContent=val; v.classList.remove('ph'); s.classList.add('done'); }
+  else     { v.textContent=ph[n-1]; v.classList.add('ph'); s.classList.remove('done'); }
+}
 
-  function pickType(t) {
-    selType = t;
-    setStep(1, t === 'ac' ? 'Air conditioner' : 'Heat pump');
-    renderSeries();
-    showOnly('p2');
-  }
+function goStep(n) {
+  if (n===1) { selType=null; selSeries=null; selTon=null; selHS=null; [1,2,3,4].forEach(i=>setStep(i,null)); document.getElementById('detail').classList.remove('show'); showOnly('p1'); }
+  else if (n===2 && selType)   { selSeries=null; selTon=null; selHS=null; [2,3,4].forEach(i=>setStep(i,null)); document.getElementById('detail').classList.remove('show'); renderSeries(); showOnly('p2'); }
+  else if (n===3 && selSeries) { selTon=null; selHS=null; [3,4].forEach(i=>setStep(i,null)); document.getElementById('detail').classList.remove('show'); renderTonnage(); showOnly('p3'); }
+  else if (n===4 && selTon)    { selHS=null; setStep(4,null); document.getElementById('detail').classList.remove('show'); renderHeatStrips(); showOnly('p4'); }
+}
 
-  function renderSeries() {
-    const grid = document.getElementById('series-grid');
-    grid.innerHTML = '';
-    const series = [...new Set(DATA.filter(d => d.type === selType).map(d => d.series))];
-    series.forEach(s => {
-      const info = SERIES_INFO[s] || {};
-      const el = document.createElement('div');
-      el.className = 'series-card';
-      el.innerHTML = `<div class="sc-name">${s}</div><div class="sc-stage">${info.stage || ''}</div><div class="sc-desc">${info.desc || ''}</div>`;
-      el.onclick = () => pickSeries(s);
-      grid.appendChild(el);
-    });
-  }
+function pickType(t) {
+  selType=t; setStep(1, t==='ac'?'Air conditioner':'Heat pump'); renderSeries(); showOnly('p2');
+}
 
-  function pickSeries(s) {
-    selSeries = s;
-    setStep(2, s);
-    renderTonnage();
-    showOnly('p3');
-  }
+function renderSeries() {
+  const g = document.getElementById('series-grid'); g.innerHTML='';
+  [...new Set(PRODUCTS.filter(d=>d.type===selType).map(d=>d.series))].forEach(s => {
+    const info = SERIES_INFO[s]||{};
+    const el = document.createElement('div'); el.className='series-card';
+    el.innerHTML=`<div class="sc-name">${s}</div><div class="sc-stage">${info.stage||''}</div><div class="sc-desc">${info.desc||''}</div>`;
+    el.onclick=()=>pickSeries(s); g.appendChild(el);
+  });
+}
 
-  function renderTonnage() {
-    const row = document.getElementById('ton-row');
-    row.innerHTML = '';
-    const tons = [...new Set(DATA.filter(d => d.type === selType && d.series === selSeries).map(d => d.tonnage))]
-      .sort((a, b) => parseFloat(a) - parseFloat(b));
-    tons.forEach(t => {
-      const el = document.createElement('button');
-      el.className = 'ton-pill';
-      el.textContent = t;
-      el.onclick = () => pickTonnage(t);
-      row.appendChild(el);
-    });
-  }
+function pickSeries(s) {
+  selSeries=s; setStep(2,s); renderTonnage(); showOnly('p3');
+}
 
-  function pickTonnage(t) {
-    setStep(3, t);
-    showOnly(null);
-    const match = DATA.find(d => d.type === selType && d.series === selSeries && d.tonnage === t);
-    if (!match) return;
-    const panel = document.getElementById('detail');
-    panel.classList.add('show');
-    document.getElementById('d-title').textContent =
-      'Carrier ' + match.series + ' — ' + match.tonnage + ' ' + (match.type === 'ac' ? 'Air Conditioner' : 'Heat Pump');
-    document.getElementById('d-sku').textContent    = match.sku;
-    document.getElementById('d-model').textContent  = 'Model ' + match.model;
-    document.getElementById('d-ah-sku').textContent  = match.ahSku;
-    document.getElementById('d-ah-desc').textContent = match.ahDesc;
-    document.getElementById('b-type').textContent   = match.type === 'ac' ? 'Air conditioner' : 'Heat pump';
-    document.getElementById('b-series').textContent = match.series;
-    document.getElementById('b-stage').textContent  = match.stage;
-    document.getElementById('b-ton').textContent    = match.tonnage;
-  }
+function renderTonnage() {
+  const r = document.getElementById('ton-row'); r.innerHTML='';
+  [...new Set(PRODUCTS.filter(d=>d.type===selType&&d.series===selSeries).map(d=>d.tonnage))].sort((a,b)=>parseFloat(a)-parseFloat(b)).forEach(t=>{
+    const el=document.createElement('button'); el.className='ton-pill'; el.textContent=t;
+    el.onclick=()=>pickTonnage(t); r.appendChild(el);
+  });
+}
 
-  function doCopy(elId, msgId) {
-    const val = document.getElementById(elId).textContent;
-    navigator.clipboard.writeText(val).then(() => {
-      const msg = document.getElementById(msgId);
-      msg.style.display = 'inline';
-      setTimeout(() => { msg.style.display = 'none'; }, 1500);
-    });
-  }
+function pickTonnage(t) {
+  selTon=t; setStep(3,t);
+  currentMatch = PRODUCTS.find(d=>d.type===selType&&d.series===selSeries&&d.tonnage===t);
+  renderHeatStrips(); showOnly('p4');
+}
 
-  function reset() {
-    selType = null; selSeries = null;
-    setStep(1, null); setStep(2, null); setStep(3, null);
-    document.getElementById('detail').classList.remove('show');
-    showOnly('p1');
-  }
+function renderHeatStrips() {
+  const g = document.getElementById('hs-grid'); g.innerHTML='';
+  HEAT_STRIPS.forEach(h => {
+    const locked = h.hpOnly && selType!=='hp';
+    const el=document.createElement('div');
+    el.className='hs-card' + (locked?' locked':'');
+    el.innerHTML=`<div class="hs-kw">${h.kw}</div><div class="hs-sku">${h.sku}</div><div class="hs-note">${h.note}</div>`;
+    if (!locked) el.onclick=()=>pickHeatStrip(h);
+    g.appendChild(el);
+  });
+}
+
+function pickHeatStrip(h) {
+  selHS = h;
+  setStep(4, h ? h.kw : 'None');
+  showOnly(null);
+  renderDetail();
+}
+
+function renderDetail() {
+  const m = currentMatch;
+  if (!m) return;
+  const panel = document.getElementById('detail');
+  panel.classList.add('show');
+
+  const typeLabel = m.type==='ac'?'Air Conditioner':'Heat Pump';
+  document.getElementById('d-title').textContent = `Carrier ${m.series} — ${m.tonnage} ${typeLabel}`;
+
+  const hasHS = !!selHS;
+  const container = document.getElementById('sku-container');
+  const cols = hasHS ? 'three' : 'two';
+
+  container.innerHTML = `
+    <div class="sku-grid ${cols}">
+      <div class="sku-box">
+        <div class="sl"><i class="ti ti-device-air-conditioner" aria-hidden="true"></i> Condenser SKU</div>
+        <div class="sv" id="d-sku">${m.sku}</div>
+        <div class="sd">Model ${m.model}</div>
+        <button class="cp-btn" onclick="doCopy('d-sku','cp1')"><i class="ti ti-copy"></i> Copy</button>
+        <span class="cp-ok" id="cp1">Copied!</span>
+      </div>
+      <div class="sku-box">
+        <div class="sl"><i class="ti ti-wind" aria-hidden="true"></i> Air handler SKU</div>
+        <div class="sv" id="d-ah-sku">${m.ahSku}</div>
+        <div class="sd">${m.ahDesc}</div>
+        <button class="cp-btn" onclick="doCopy('d-ah-sku','cp2')"><i class="ti ti-copy"></i> Copy</button>
+        <span class="cp-ok" id="cp2">Copied!</span>
+      </div>
+      ${hasHS ? `
+      <div class="sku-box">
+        <div class="sl"><i class="ti ti-flame" aria-hidden="true"></i> Heat strip SKU</div>
+        <div class="sv" id="d-hs-sku">${selHS.sku}</div>
+        <div class="sd">${selHS.kw} · ${selHS.note}</div>
+        <button class="cp-btn" onclick="doCopy('d-hs-sku','cp3')"><i class="ti ti-copy"></i> Copy</button>
+        <span class="cp-ok" id="cp3">Copied!</span>
+      </div>` : ''}
+    </div>`;
+
+  const b = document.getElementById('badges');
+  b.innerHTML = `
+    <span class="badge">${m.type==='ac'?'Air conditioner':'Heat pump'}</span>
+    <span class="badge">${m.series}</span>
+    <span class="badge">${m.stage}</span>
+    <span class="badge">${m.tonnage}</span>
+    ${hasHS ? `<span class="badge">${selHS.kw} heat strip</span>` : '<span class="badge">No heat strip</span>'}`;
+}
+
+function doCopy(elId, msgId) {
+  const val = document.getElementById(elId).textContent;
+  navigator.clipboard.writeText(val).then(() => {
+    const msg = document.getElementById(msgId);
+    msg.style.display='inline';
+    setTimeout(()=>msg.style.display='none', 1500);
+  });
+}
+
+function reset() {
+  selType=null; selSeries=null; selTon=null; selHS=null; currentMatch=null;
+  [1,2,3,4].forEach(i=>setStep(i,null));
+  document.getElementById('detail').classList.remove('show');
+  showOnly('p1');
+}
 </script>
-
-</body>
-</html>
